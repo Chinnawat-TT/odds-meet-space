@@ -1,2 +1,4 @@
 class MeetingRoom < ApplicationRecord
-end
+    has_many :bookings, dependent: :destroy
+  end
+  
