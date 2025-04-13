@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  meeting_room: one
+  booking_date: 2025-04-13
+  booking_time: MyString
+  reason: MyText
+  email: MyString
+  status: MyString
+
+two:
+  meeting_room: two
+  booking_date: 2025-04-13
+  booking_time: MyString
+  reason: MyText
+  email: MyString
+  status: MyString
