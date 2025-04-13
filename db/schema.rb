@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_13_065539) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_13_092530) do
   create_table "bookings", force: :cascade do |t|
     t.integer "meeting_room_id", null: false
     t.date "booking_date"
@@ -22,6 +22,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_13_065539) do
     t.datetime "updated_at", null: false
     t.index ["meeting_room_id", "booking_date", "booking_time"], name: "idx_on_meeting_room_id_booking_date_booking_time_27cf4d548b", unique: true
     t.index ["meeting_room_id"], name: "index_bookings_on_meeting_room_id"
+  end
+
+  create_table "holidays", force: :cascade do |t|
+    t.string "name"
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "meeting_rooms", force: :cascade do |t|
