@@ -2,7 +2,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-  const bookedSlots = <%= @booked_slots.to_json %>; // เอาข้อมูลการจองที่ถูกดึงมาจาก controller
+  const bookedSlots = <%= @booked_slots.to_json %>; 
 
   const timeSelect = document.getElementById("booking_booking_time");
   const hourlySlotsDiv = document.getElementById("hourly_slots");
@@ -14,7 +14,7 @@
       hourlySlotsDiv.classList.add("hidden");
     }
 
-    // Disable booked hourly slots
+   
     const checkboxes = hourlySlotsDiv.querySelectorAll("input[type='checkbox']");
     checkboxes.forEach((checkbox) => {
       const timeSlot = checkbox.dataset.timeSlot;
