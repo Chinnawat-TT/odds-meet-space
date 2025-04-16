@@ -1,0 +1,8 @@
+
+<h1 class="text-2xl font-bold mb-4">Booking Summary</h1>
+
+<p><strong>Room:</strong> <%= @booking.meeting_room.name %></p>
+<p><strong>Date:</strong> <%= @booking.booking_date.strftime("%A, %d %B %Y") %></p>
+<p><strong>Time:</strong> <%= @booking.booking_time.humanize %></p>
+<p><strong>Reason:</strong> <%= @booking.reason %></p>
+<p><strong>Email:</strong> <%= @booking.email %></p>
