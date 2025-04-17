@@ -3,7 +3,7 @@ class BookingsController < ApplicationController
 
   def new
     @booking = Booking.new
-   
+    @holidays = Holiday.pluck(:date) 
     if params[:booking_date].present? && params[:meeting_room_id].present?
    
       @booked_slots = Booking.where(booking_date: params[:booking_date], meeting_room_id: params[:meeting_room_id]).pluck(:booking_time)

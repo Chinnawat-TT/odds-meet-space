@@ -3,7 +3,9 @@
       class: "border p-2",
       autocomplete: "off",
       placeholder: "เลือกวันที่",
-      data: { controller: "flatpickr" } %>
+      data: { controller: "flatpickr" ,
+      flatpickr_holidays_value: @holidays.to_json
+      } %>
 
   <%= f.submit "Book", class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
 <% end %>
