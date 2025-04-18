@@ -16,7 +16,7 @@
             } %>
       </div>
     
-  </div>
+  
 <%= f.hidden_field :meeting_room_id, id: "selected-room-id" %>
 <div id="room-section" class="w-full mt-8 hidden">
   <h2 class="text-2xl font-semibold mb-4 text-center">Select a Room</h2>
@@ -24,6 +24,36 @@
 
   </div>
 </div>
+
+<div id="time-section" class="w-full mt-8 hidden">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Select a Time</h2>
+
+  <div class="flex justify-center gap-5  mb-4">
+    <button type="button" class="tab-button active-tab" data-tab="slot">ช่วงเวลา</button>
+    <button type="button" class="tab-button" data-tab="hourly">รายชั่วโมง</button>
+  </div>
+
+  <div id="slot-tab" class="tab-content">
+    <div class="flex flex-wrap gap-4 justify-center">
+      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="09:00-12:00">9.00 - 12.00</button>
+      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="13:00-18:00">13.00 - 18.00</button>
+      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="09:00-18:00">9.00 - 18.00</button>
+    </div>
+  </div>
+
+  <div id="hourly-tab" class="tab-content hidden">
+    <div class="flex flex-wrap gap-2 justify-center">
+      <% (9..17).each do |hour| %>
+        <button type="button" class="hour-option px-3 py-1 border rounded  data-hour="<%= "%02d:00" % hour %>">
+          <%= "%02d:00" % hour %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :time_slot, id: "selected-time-slot" %>
 </div>
+
+
 <% end %>
 
