@@ -11,12 +11,18 @@
     <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css", rel: "stylesheet" %>
 
     <%= javascript_importmap_tags %>
-
+  <div class="flex flex-col min-h-screen">
   </head>
-
+  <%= render "shared/header" %>
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+   
+    <main class="flex-1 py-8">
+        <div class="container max-w-7xl mx-auto px-4 sm:px-6">
       <%= yield %>
+      </div>
     </main>
+    
   </body>
+  <%= render "shared/footer" %>
+  </div>
 </html>
