@@ -33,6 +33,18 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
   end
 
+  def available_rooms
+    date = params[:date]
+
+    # logic ตรวจว่าเป็นวันหยุดหรือเปล่าก็ได้
+    if date.blank?
+      render json: { error: "Date required" }, status: :unprocessable_entity
+    else
+      rooms = MeetingRoom.all
+      render json: rooms
+    end
+  end
+
   private
 
   def set_meeting_rooms
