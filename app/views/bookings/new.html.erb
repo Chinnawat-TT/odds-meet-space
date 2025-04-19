@@ -7,7 +7,7 @@
     <%= form_with model: @booking, url: bookings_path, local: true do |f| %>
       <!-- วันที่ -->
       <div class="mb-4">
-        <%= f.text_field :booking_date,
+        <%= f.text_field :booking_date, id: "booking_date",
           class: "border p-2 w-full rounded",
           autocomplete: "off",
           placeholder: "เลือกวันที่",
@@ -31,8 +31,8 @@
         <h2 class="text-2xl font-semibold mb-4 text-center">Select Time Slot</h2>
 
         <div class="flex justify-center gap-5 mb-4">
-          <button type="button" class="tab-button active-tab" data-tab="slot">Time Blocks</button>
-          <button type="button" class="tab-button" data-tab="hourly">Hourly</button>
+          <button type="button" class="tab-button active-tab cursor-pointer" data-tab="slot">Time Blocks</button>
+          <button type="button" class="tab-button cursor-pointer" data-tab="hourly">Hourly</button>
         </div>
 
         <!-- Tab: ช่วงเวลา -->

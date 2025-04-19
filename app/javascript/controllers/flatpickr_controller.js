@@ -115,8 +115,12 @@ export default class extends Controller {
             document.querySelectorAll(".room-card").forEach(el =>
               el.classList.remove("ring", "ring-4", "ring-blue-500")
             )
+
             card.classList.add("ring", "ring-4", "ring-blue-500")
             document.querySelector("#selected-room-id").value = card.dataset.roomId
+            
+            const date = document.querySelector("#booking_date").value;
+            this.fetchUnavailableTimes(date, card.dataset.roomId);
 
             const timeSection = document.querySelector("#time-section")
             if (timeSection) timeSection.classList.remove("hidden")
@@ -225,4 +229,51 @@ document.querySelectorAll(".room-card").forEach(card => {
       console.error("❌ Error loading rooms:", e)
     }
   }
+
+  fetchUnavailableTimes(date, roomId) {
+    fetch(`/bookings/unavailable_times?date=${date}&room_id=${roomId}`)
+      .then(response => response.json())
+      .then(data => {
+        const unavailable = data.unavailable;
+        console.log(unavailable);
+  
+        // Map ช่วงเวลา slot ไปยัง array ของชั่วโมง
+        const slotToHours = {
+          "09:00-12:00": ["09:00", "10:00", "11:00"],
+          "13:00-18:00": ["13:00", "14:00", "15:00", "16:00", "17:00"],
+          "09:00-18:00": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"],
+        };
+  
+        // รวมชั่วโมงทั้งหมดที่ต้อง disable จาก unavailable slots
+        const disabledHours = new Set();
+        unavailable.forEach(slot => {
+          if (slotToHours[slot]) {
+            slotToHours[slot].forEach(hour => disabledHours.add(hour));
+          } else {
+            // ถ้า slot ไม่ตรง key ใดเลย เช่น เป็นรายชั่วโมงโดยตรง
+            disabledHours.add(slot);
+          }
+        });
+  
+        // ปิดปุ่มช่วงเวลา
+        document.querySelectorAll('.slot-option').forEach(button => {
+          const isUnavailable = unavailable.includes(button.dataset.slot);
+          button.disabled = isUnavailable;
+          button.classList.toggle('opacity-50', isUnavailable);
+          button.classList.toggle('cursor-not-allowed', isUnavailable);
+          button.title = isUnavailable ? "This time is already booked." : "";
+        });
+  
+        // ปิดปุ่มรายชั่วโมง
+        document.querySelectorAll('.hour-option').forEach(button => {
+          const isUnavailable = disabledHours.has(button.dataset.hour);
+          button.disabled = isUnavailable;
+          button.classList.toggle('opacity-50', isUnavailable);
+          button.classList.toggle('cursor-not-allowed', isUnavailable);
+          button.title = isUnavailable ? "This time is already booked." : "";
+        });
+      });
+  }
+  
+  
 }

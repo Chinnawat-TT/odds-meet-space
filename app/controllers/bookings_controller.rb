@@ -47,6 +47,17 @@ class BookingsController < ApplicationController
     end
   end
 
+  def unavailable_times
+    date = params[:date]
+    room_id = params[:room_id]
+  
+    bookings = Booking.where(meeting_room_id: room_id, booking_date: date)
+    times = bookings.pluck(:booking_time) 
+  
+    render json: { unavailable: times }
+  end
+  
+
   private
 
   def set_meeting_rooms
