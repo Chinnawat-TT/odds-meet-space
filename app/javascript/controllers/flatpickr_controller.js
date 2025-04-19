@@ -239,25 +239,39 @@ document.querySelectorAll(".room-card").forEach(card => {
   
         // Map ช่วงเวลา slot ไปยัง array ของชั่วโมง
         const slotToHours = {
-          "09:00-12:00": ["09:00", "10:00", "11:00"],
+          "09:00-12:00": ["09:00", "10:00", "11:00", "12:00"],
           "13:00-18:00": ["13:00", "14:00", "15:00", "16:00", "17:00"],
-          "09:00-18:00": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"],
+          "09:00-18:00": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"],
         };
   
         // รวมชั่วโมงทั้งหมดที่ต้อง disable จาก unavailable slots
         const disabledHours = new Set();
         unavailable.forEach(slot => {
           if (slotToHours[slot]) {
+            // ถ้าเป็น slot แบบช่วงเวลา
             slotToHours[slot].forEach(hour => disabledHours.add(hour));
           } else {
-            // ถ้า slot ไม่ตรง key ใดเลย เช่น เป็นรายชั่วโมงโดยตรง
-            disabledHours.add(slot);
+            // ถ้าเป็นรายชั่วโมงที่ถูกส่งมาแบบ "09:00, 10:00"
+            slot.split(',').map(s => s.trim()).forEach(hour => disabledHours.add(hour));
           }
         });
+        
   
         // ปิดปุ่มช่วงเวลา
         document.querySelectorAll('.slot-option').forEach(button => {
-          const isUnavailable = unavailable.includes(button.dataset.slot);
+          const slot = button.dataset.slot;
+          const hoursInSlot = slotToHours[slot];
+        
+          let isUnavailable = false;
+        
+          if (hoursInSlot) {
+            // ถ้ามีชั่วโมงใดชั่วโมงหนึ่งใน slot ที่ถูก disable ก็ถือว่า unavailable
+            isUnavailable = hoursInSlot.some(hour => disabledHours.has(hour));
+          } else {
+            // ถ้าไม่ใช่ช่วงเวลา predefined (เช่น กรณีผิดพลาด)
+            isUnavailable = unavailable.includes(slot);
+          }
+        
           button.disabled = isUnavailable;
           button.classList.toggle('opacity-50', isUnavailable);
           button.classList.toggle('cursor-not-allowed', isUnavailable);
