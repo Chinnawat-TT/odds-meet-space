@@ -2,8 +2,8 @@
 class Booking < ApplicationRecord
   belongs_to :meeting_room
 
-  validates :booking_date, :booking_time, :reason, :email, presence: true
-  validates :email, format: { with: /\A[\w+\-.]+@odds\.team\z/, message: "must be a company email (odds.team)" }
+  validates :meeting_room_id, :booking_date, :booking_time, :email, presence: true
+  validates :email, format: { with: /\A[\w+\-.]+@odds\.team\z/, message: "Access denied for this email" }
   validate :not_in_the_past
   validate :not_on_holiday
   validate :unique_slot

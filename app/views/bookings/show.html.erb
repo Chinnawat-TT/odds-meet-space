@@ -6,3 +6,8 @@
 <p><strong>Time:</strong> <%= @booking.booking_time.humanize %></p>
 <p><strong>Reason:</strong> <%= @booking.reason %></p>
 <p><strong>Email:</strong> <%= @booking.email %></p>
+
+<div class="mt-6 text-center">
+  <%= link_to "Back to Home", root_path, class: "text-blue-600 underline hover:text-blue-800" %>
+</div>
+

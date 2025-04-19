@@ -14,19 +14,21 @@ class BookingsController < ApplicationController
   end
   
   def create
-    @booking = Booking.new(booking_params)
+    reason = params[:booking][:reason]
+    custom_reason = params[:custom_reason]
+    final_reason = reason == "Other" ? custom_reason : reason
   
-    Rails.logger.debug "🎯 Params: #{booking_params.inspect}"
-    Rails.logger.debug "🎯 Valid?: #{@booking.valid?}"
-    Rails.logger.debug "🎯 Errors: #{@booking.errors.full_messages}" if @booking.invalid?
+    @booking = Booking.new(booking_params.merge(reason: final_reason))
   
     if @booking.save
-      # BookingMailer.confirmation_email(@booking).deliver_later
-      redirect_to booking_path(@booking), notice: "Booking successful!"
+      redirect_to @booking, notice: "Booking created successfully."
+
     else
-      render :new, status: :unprocessable_entity
+      flash.now[:alert] = "Failed to create booking."
+      render :new
     end
   end
+  
   
   
   def show
@@ -52,7 +54,13 @@ class BookingsController < ApplicationController
   end
   
   def booking_params
-    permitted = params.require(:booking).permit(:meeting_room_id, :booking_date, :booking_time, :reason, :email, hourly_times: [])
+    permitted = params.require(:booking)
+    .permit(:meeting_room_id, 
+      :booking_date, 
+      :booking_time, 
+      :reason, 
+      :email, 
+      hourly_times: [])
     
  
     if permitted[:booking_time] == "hourly" && permitted[:hourly_times]

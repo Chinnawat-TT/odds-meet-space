@@ -1,59 +1,89 @@
-<div class="container mx-auto px-4  flex flex-col items-center">
+<div class="container mx-auto px-4 flex flex-col items-center">
   <h1 class="text-4xl font-bold mb-4 text-center">Book a Meeting Room</h1>
 
   <div class="w-full max-w-md border p-6 rounded shadow">
     <h2 class="text-2xl font-semibold mb-4 text-center">Select a Date</h2>
 
     <%= form_with model: @booking, url: bookings_path, local: true do |f| %>
+      <!-- วันที่ -->
       <div class="mb-4">
         <%= f.text_field :booking_date,
-            class: "border p-2 w-full rounded",
-            autocomplete: "off",
-            placeholder: "เลือกวันที่",
-            data: {
-              controller: "flatpickr",
-              flatpickr_holidays_value: @holidays.to_json
-            } %>
+          class: "border p-2 w-full rounded",
+          autocomplete: "off",
+          placeholder: "เลือกวันที่",
+          data: {
+            controller: "flatpickr",
+            flatpickr_holidays_value: @holidays.to_json
+          } %>
       </div>
-    
-  
-<%= f.hidden_field :meeting_room_id, id: "selected-room-id" %>
-<div id="room-section" class="w-full mt-8 hidden">
-  <h2 class="text-2xl font-semibold mb-4 text-center">Select a Room</h2>
-  <div id="room-list" class="flex flex-wrap gap-4 justify-center">
 
+      <!-- ซ่อนค่า room ที่เลือก -->
+      <%= f.hidden_field :meeting_room_id, id: "selected-room-id" %>
+
+      <!-- ห้องประชุม -->
+      <div id="room-section" class="w-full mt-8 hidden">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Select a Room</h2>
+        <div id="room-list" class="flex flex-wrap gap-4 justify-center"></div>
+      </div>
+
+      <!-- เวลา -->
+      <div id="time-section" class="w-full mt-8 hidden">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Select a Time</h2>
+
+        <div class="flex justify-center gap-5 mb-4">
+          <button type="button" class="tab-button active-tab" data-tab="slot">ช่วงเวลา</button>
+          <button type="button" class="tab-button" data-tab="hourly">รายชั่วโมง</button>
+        </div>
+
+        <!-- Tab: ช่วงเวลา -->
+        <div id="slot-tab" class="tab-content">
+          <div class="flex flex-wrap gap-4 justify-center">
+            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="09:00-12:00">9.00 - 12.00</button>
+            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="13:00-18:00">13.00 - 18.00</button>
+            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="09:00-18:00">9.00 - 18.00</button>
+          </div>
+        </div>
+
+        <!-- Tab: รายชั่วโมง -->
+        <div id="hourly-tab" class="tab-content hidden">
+          <div class="flex flex-wrap gap-2 justify-center">
+            <% (9..17).each do |hour| %>
+              <button type="button" class="hour-option px-3 py-1 border rounded" data-hour="<%= "%02d:00" % hour %>">
+                <%= "%02d:00" % hour %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- เก็บค่าเวลาที่เลือก -->
+        <%= f.hidden_field :booking_time, id: "selected-time-slot" %>
+
+
+        <!-- เหตุผลการจอง -->
+        <div class="w-full mt-8 hidden" id="reason-section">
+          <h2 class="text-2xl font-semibold mb-4 text-center">Reason for Booking</h2>
+          <div class="mb-4">
+            <%= f.select :reason, ["Team Meeting", "Client Meeting", "Workshop", "Interview", "Other"], {},
+                class: "border p-2 w-full rounded", id: "booking-reason" %>
+          </div>
+          <div id="custom-reason-container" class="hidden mb-4">
+            <textarea name="custom_reason" id="custom-reason" class="border p-2 w-full rounded" placeholder="Please specify..."></textarea>
+
+          </div>
+        </div>
+
+        <!-- อีเมล -->
+        <div class="w-full mt-8 hidden" id="email-section">
+          <h2 class="text-2xl font-semibold mb-4 text-center">Your Email</h2>
+          <div class="mb-4">
+            <%= f.email_field :email, class: "border p-2 w-full rounded", placeholder: "you email", id: "booking-email" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <%= f.submit "Submit Booking", class: "bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600" %>
+      </div>
+    <% end %>
   </div>
 </div>
-
-<div id="time-section" class="w-full mt-8 hidden">
-  <h2 class="text-2xl font-semibold mb-4 text-center">Select a Time</h2>
-
-  <div class="flex justify-center gap-5  mb-4">
-    <button type="button" class="tab-button active-tab" data-tab="slot">ช่วงเวลา</button>
-    <button type="button" class="tab-button" data-tab="hourly">รายชั่วโมง</button>
-  </div>
-
-  <div id="slot-tab" class="tab-content">
-    <div class="flex flex-wrap gap-4 justify-center">
-      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="09:00-12:00">9.00 - 12.00</button>
-      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="13:00-18:00">13.00 - 18.00</button>
-      <button type="button" class="slot-option px-4 py-2 border rounded  data-slot="09:00-18:00">9.00 - 18.00</button>
-    </div>
-  </div>
-
-  <div id="hourly-tab" class="tab-content hidden">
-    <div class="flex flex-wrap gap-2 justify-center">
-      <% (9..17).each do |hour| %>
-        <button type="button" class="hour-option px-3 py-1 border rounded  data-hour="<%= "%02d:00" % hour %>">
-          <%= "%02d:00" % hour %>
-        </button>
-      <% end %>
-    </div>
-  </div>
-
-  <%= f.hidden_field :time_slot, id: "selected-time-slot" %>
-</div>
-
-
-<% end %>
-
