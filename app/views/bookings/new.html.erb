@@ -22,25 +22,25 @@
 
       <!-- ห้องประชุม -->
       <div id="room-section" class="w-full mt-8 hidden">
-        <h2 class="text-2xl font-semibold mb-4 text-center">Select a Room</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-center">Choose Room</h2>
         <div id="room-list" class="flex flex-wrap gap-4 justify-center"></div>
       </div>
 
       <!-- เวลา -->
       <div id="time-section" class="w-full mt-8 hidden">
-        <h2 class="text-2xl font-semibold mb-4 text-center">Select a Time</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-center">Select Time Slot</h2>
 
         <div class="flex justify-center gap-5 mb-4">
-          <button type="button" class="tab-button active-tab" data-tab="slot">ช่วงเวลา</button>
-          <button type="button" class="tab-button" data-tab="hourly">รายชั่วโมง</button>
+          <button type="button" class="tab-button active-tab" data-tab="slot">Time Blocks</button>
+          <button type="button" class="tab-button" data-tab="hourly">Hourly</button>
         </div>
 
         <!-- Tab: ช่วงเวลา -->
         <div id="slot-tab" class="tab-content">
           <div class="flex flex-wrap gap-4 justify-center">
-            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="09:00-12:00">9.00 - 12.00</button>
-            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="13:00-18:00">13.00 - 18.00</button>
-            <button type="button" class="slot-option px-4 py-2 border rounded" data-slot="09:00-18:00">9.00 - 18.00</button>
+            <button type="button" class="slot-option px-4 py-2 border rounded w-64" data-slot="09:00-12:00">Morning: 9.00 - 12.00</button>
+            <button type="button" class="slot-option px-4 py-2 border rounded w-64" data-slot="13:00-18:00">Afternoon: 13.00 - 18.00</button>
+            <button type="button" class="slot-option px-4 py-2 border rounded w-64" data-slot="09:00-18:00">Full Day: 9.00 - 18.00</button>
           </div>
         </div>
 
