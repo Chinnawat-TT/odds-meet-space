@@ -44,11 +44,38 @@ export default class extends Controller {
     if (form) {
       form.addEventListener("submit", e => {
         const emailInput = document.querySelector("#booking-email")
+        const reasonSelect = document.querySelector("#booking-reason")
+        const timeSlot = document.querySelector("#selected-time-slot")?.value.trim()
+        const errorBox = document.querySelector("#form-error-message")
+      
         const email = emailInput.value.trim()
+      
+        const displayFormError = message => {
+          errorBox.textContent = message
+          errorBox.classList.remove("hidden")
+          errorBox.scrollIntoView({ behavior: "smooth" })
+        }
+      
         if (!email.endsWith("@odds.team")) {
           e.preventDefault()
-          alert("You are not authorized to book. Your email must end with @odds.team.")
+          displayFormError("You are not authorized to book. Your email must end with @odds.team.")
+          return
         }
+      
+        if (!timeSlot) {
+          e.preventDefault()
+          displayFormError("Please select a time slot before submitting.")
+          return
+        }
+      
+        if (!reasonSelect.value || reasonSelect.value.trim() === "") {
+          e.preventDefault()
+          displayFormError("Please select a reason for booking.")
+          return
+        }
+      
+        // ถ้าผ่านทั้งหมดก็ซ่อน error
+        errorBox.classList.add("hidden")
       })
     }
   }
