@@ -156,6 +156,43 @@ export default class extends Controller {
             showReasonAndEmailSection()
           })
         })
+        // ✅ เมื่อเลือกห้อง
+document.querySelectorAll(".room-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll(".room-card").forEach(el =>
+      el.classList.remove("ring", "ring-4", "ring-blue-500")
+    )
+    card.classList.add("ring", "ring-4", "ring-blue-500")
+    document.querySelector("#selected-room-id").value = card.dataset.roomId
+
+    const timeSection = document.querySelector("#time-section")
+    if (timeSection) timeSection.classList.remove("hidden")
+
+    // ✅ แสดงปุ่ม Submit พร้อม Reason และ Email
+    document.querySelector("#reason-section")?.classList.remove("hidden")
+    document.querySelector("#email-section")?.classList.remove("hidden")
+    document.querySelector("#submit-section")?.classList.remove("hidden")
+
+    // ✅ ตรวจสอบ Reason & Email เพื่อเปิด/ปิดปุ่ม
+    const reasonSelect = document.querySelector("#booking-reason")
+    const emailInput = document.querySelector("#booking-email")
+    const submitButton = document.querySelector("#submit-button")
+
+    function validateForm() {
+      const emailValid = emailInput.value.trim().endsWith("@odds.team")
+      const reasonValid = reasonSelect.value && reasonSelect.value.trim() !== ""
+      submitButton.disabled = !(emailValid && reasonValid)
+    }
+
+    // ถ้าผู้ใช้เปลี่ยนค่า reason หรือ email ให้เช็คทุกครั้ง
+    reasonSelect.addEventListener("change", validateForm)
+    emailInput.addEventListener("input", validateForm)
+
+    // เรียกตรวจสอบครั้งแรก
+    validateForm()
+  })
+})
+
       }
     } catch (e) {
       console.error("❌ Error loading rooms:", e)

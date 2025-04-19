@@ -1,4 +1,8 @@
-
+<% if flash[:notice] %>
+  <div class="bg-green-100 text-green-700 p-3 rounded my-2 text-center"><%= flash[:notice] %></div>
+<% elsif flash[:alert] %>
+  <div class="bg-red-100 text-red-700 p-3 rounded my-2 text-center"><%= flash[:alert] %></div>
+<% end %>
 <h1 class="text-2xl font-bold mb-4">Booking Summary</h1>
 
 <p><strong>Room:</strong> <%= @booking.meeting_room.name %></p>
@@ -8,6 +12,6 @@
 <p><strong>Email:</strong> <%= @booking.email %></p>
 
 <div class="mt-6 text-center">
-  <%= link_to "Back to Home", root_path, class: "text-blue-600 underline hover:text-blue-800" %>
+  <%= link_to " <- Back to Home", root_path, class: "text-lg font-semibold text-blue-600  hover:text-blue-800" %>
 </div>
 
