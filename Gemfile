@@ -52,10 +52,12 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
 end
 
+gem 'letter_opener_web', group: :development
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-
+  
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
 

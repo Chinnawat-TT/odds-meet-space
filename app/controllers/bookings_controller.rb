@@ -21,6 +21,7 @@ class BookingsController < ApplicationController
     @booking = Booking.new(booking_params.merge(reason: final_reason))
   
     if @booking.save
+      BookingMailer.confirmation_email(@booking).deliver_later
       redirect_to @booking, notice: "Booking created successfully."
 
     else
