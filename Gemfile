@@ -53,6 +53,7 @@ group :development, :test do
 end
 
 gem 'letter_opener_web', group: :development
+gem 'dotenv-rails', groups: [:development, :test, :production]
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
