@@ -244,34 +244,49 @@ document.querySelectorAll(".room-card").forEach(card => {
           "09:00-18:00": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"],
         };
   
-        // รวมชั่วโมงทั้งหมดที่ต้อง disable จาก unavailable slots
+        // ✅ ฟังก์ชันแปลงช่วงเวลาระหว่าง 2 ชั่วโมงให้กลายเป็น array
+        function expandHourRange(start, end) {
+          const result = [];
+          let currentHour = parseInt(start.split(":")[0], 10);
+          const endHour = parseInt(end.split(":")[0], 10);
+          while (currentHour <= endHour) {
+            result.push(`${String(currentHour).padStart(2, "0")}:00`);
+            currentHour++;
+          }
+          return result;
+        }
+  
         const disabledHours = new Set();
+  
         unavailable.forEach(slot => {
           if (slotToHours[slot]) {
-            // ถ้าเป็น slot แบบช่วงเวลา
+            // ถ้าเป็น slot แบบช่วงเวลา (เช่น 09:00-12:00)
             slotToHours[slot].forEach(hour => disabledHours.add(hour));
           } else {
-            // ถ้าเป็นรายชั่วโมงที่ถูกส่งมาแบบ "09:00, 10:00"
-            slot.split(',').map(s => s.trim()).forEach(hour => disabledHours.add(hour));
+            // ถ้าเป็นรายชั่วโมงหรือช่วงเวลาแบบ 10:00, 15:00
+            const times = slot.split(',').map(s => s.trim());
+            if (times.length === 2) {
+              // เป็นช่วงเวลาแบบ start, end
+              const [start, end] = times;
+              const range = expandHourRange(start, end);
+              range.forEach(hour => disabledHours.add(hour));
+            } else {
+              // รายชั่วโมงเดี่ยวๆ
+              times.forEach(hour => disabledHours.add(hour));
+            }
           }
         });
-        
   
         // ปิดปุ่มช่วงเวลา
         document.querySelectorAll('.slot-option').forEach(button => {
           const slot = button.dataset.slot;
           const hoursInSlot = slotToHours[slot];
-        
+  
           let isUnavailable = false;
-        
           if (hoursInSlot) {
-            // ถ้ามีชั่วโมงใดชั่วโมงหนึ่งใน slot ที่ถูก disable ก็ถือว่า unavailable
             isUnavailable = hoursInSlot.some(hour => disabledHours.has(hour));
-          } else {
-            // ถ้าไม่ใช่ช่วงเวลา predefined (เช่น กรณีผิดพลาด)
-            isUnavailable = unavailable.includes(slot);
           }
-        
+  
           button.disabled = isUnavailable;
           button.classList.toggle('opacity-50', isUnavailable);
           button.classList.toggle('cursor-not-allowed', isUnavailable);
@@ -288,6 +303,7 @@ document.querySelectorAll(".room-card").forEach(card => {
         });
       });
   }
+  
   
   
 }
