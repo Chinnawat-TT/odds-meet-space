@@ -8,11 +8,10 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 MeetingRoom.create!([
-    { name: "Meeting Room A", description: "Small meeting room" },
-    { name: "Meeting Room B", description: "Small meeting room" },
-    { name: "Meeting Room C", description: "Small meeting room" },
-    { name: "Meeting Room D", description: "Small meeting room" },
-    { name: "Meeting Room E", description: "Small meeting room" },
-    { name: "Meeting Room F", description: "Large meeting room" },
-    { name: "Meeting Room G", description: "Large meeting room" }
+    { name: "Room Territory 1", description: "Small room" },
+    { name: "Room Territory 2", description: "Small room" },
+    { name: "Meeting Room 1", description: "Small room" },
+    { name: "Meeting Room 2", description: "Small room" },
+    { name: "All Nighter", description: "Small room" },
+    { name: "Global Room", description: "Large room" },
   ])
