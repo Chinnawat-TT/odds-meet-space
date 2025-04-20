@@ -39,7 +39,6 @@ class BookingsController < ApplicationController
   def available_rooms
     date = params[:date]
 
-    # logic ตรวจว่าเป็นวันหยุดหรือเปล่าก็ได้
     if date.blank?
       render json: { error: "Date required" }, status: :unprocessable_entity
     else
@@ -58,6 +57,57 @@ class BookingsController < ApplicationController
     render json: { unavailable: times }
   end
   
+
+  def lookup_form
+  end
+
+  def lookup
+    if request.post?
+      email = params[:email].to_s.strip.downcase
+  
+      if email.blank? || !email.ends_with?("@odds.team")
+        flash.now[:alert] = "Please enter a valid @odds.team email."
+        render :lookup_form and return
+      end
+  
+      @bookings = Booking.where("LOWER(email) = ?", email).order(date: :asc, start_time: :asc)
+  
+      if @bookings.any?
+        render :lookup_result
+      else
+        flash.now[:alert] = "No bookings found for this email."
+        render :lookup_form
+      end
+    else
+      render :lookup_form
+    end
+  end
+  
+  def lookup_result
+    email = params[:email]
+    @bookings = Booking.where(email: email)
+
+    if @bookings.empty?
+      flash[:alert] = "No bookings found for this email."
+      render :lookup_form
+    else
+      render :lookup_result
+    end
+  end
+
+  def destroy
+    @booking = Booking.find(params[:id])
+    @booking.destroy
+  
+    respond_to do |format|
+      format.html { redirect_to bookings_lookup_path, notice: "Booking deleted successfully." }
+      format.json { head :no_content }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("booking_#{@booking.id}") }
+    end
+  end
+  
+  
+
 
   private
 
