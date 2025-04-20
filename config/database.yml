@@ -9,3 +9,13 @@ default: &default
 development:
   <<: *default
   database: meeting_room
+
+production:
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV['DB_HOST'] %>
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  database: <%= ENV['DB_NAME'] %>
+  pool: 5
+
