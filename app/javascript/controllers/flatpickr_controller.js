@@ -24,13 +24,13 @@ export default class extends Controller {
       disableMobile: true,
       disable: [
         ...disabledDates,
-        date => date.getDay() === 0 || date.getDay() === 6 // ปิดเสาร์-อาทิตย์
+        date => date.getDay() === 0 || date.getDay() === 6 
       ],
       position: "auto center",
       onChange: this.loadRooms.bind(this)
     })
 
-    // ซ่อน/แสดง Custom Reason
+
     const reasonSelect = document.querySelector("#booking-reason")
     const customContainer = document.querySelector("#custom-reason-container")
     if (reasonSelect) {
@@ -39,7 +39,7 @@ export default class extends Controller {
       })
     }
 
-    // ตรวจสอบอีเมลก่อนส่งฟอร์ม
+  
     const form = this.element.closest("form")
     if (form) {
       form.addEventListener("submit", e => {
@@ -74,7 +74,6 @@ export default class extends Controller {
           return
         }
       
-        // ถ้าผ่านทั้งหมดก็ซ่อน error
         errorBox.classList.add("hidden")
       })
     }
@@ -127,7 +126,7 @@ export default class extends Controller {
           })
         })
 
-        // ✅ แท็บเลือกเวลา: ช่วงเวลา / รายชั่วโมง
+        
         document.querySelectorAll(".tab-button").forEach(btn => {
           btn.addEventListener("click", () => {
             document.querySelectorAll(".tab-button").forEach(b =>
@@ -141,7 +140,6 @@ export default class extends Controller {
             )
             document.querySelector(`#${tab}-tab`).classList.remove("hidden")
 
-            // ล้าง selection ของฝั่งตรงข้าม
             const selectedSlot = document.querySelector("#selected-time-slot")
             if (tab === "slot") {
               document.querySelectorAll(".hour-option").forEach(b =>
@@ -157,7 +155,7 @@ export default class extends Controller {
           })
         })
 
-        // ✅ เลือกช่วงเวลาแบบ toggle
+        
         document.querySelectorAll(".slot-option").forEach(button => {
           button.addEventListener("click", () => {
             const isActive = button.classList.contains("bg-blue-500")
@@ -174,7 +172,7 @@ export default class extends Controller {
           })
         })
 
-        // ✅ เลือกเวลารายชั่วโมง (เลือกหลายชั่วโมงได้)
+        
         document.querySelectorAll(".hour-option").forEach(button => {
           button.addEventListener("click", () => {
             button.classList.toggle("bg-blue-500")
@@ -187,24 +185,22 @@ export default class extends Controller {
             showReasonAndEmailSection()
           })
         })
-        // ✅ เมื่อเลือกห้อง
-document.querySelectorAll(".room-card").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelectorAll(".room-card").forEach(el =>
-      el.classList.remove("ring", "ring-4", "ring-blue-500")
-    )
+
+        document.querySelectorAll(".room-card").forEach(card => {
+          card.addEventListener("click", () => {
+            document.querySelectorAll(".room-card").forEach(el =>
+              el.classList.remove("ring", "ring-4", "ring-blue-500")
+            )
     card.classList.add("ring", "ring-4", "ring-blue-500")
     document.querySelector("#selected-room-id").value = card.dataset.roomId
 
     const timeSection = document.querySelector("#time-section")
     if (timeSection) timeSection.classList.remove("hidden")
 
-    // ✅ แสดงปุ่ม Submit พร้อม Reason และ Email
     document.querySelector("#reason-section")?.classList.remove("hidden")
     document.querySelector("#email-section")?.classList.remove("hidden")
     document.querySelector("#submit-section")?.classList.remove("hidden")
 
-    // ✅ ตรวจสอบ Reason & Email เพื่อเปิด/ปิดปุ่ม
     const reasonSelect = document.querySelector("#booking-reason")
     const emailInput = document.querySelector("#booking-email")
     const submitButton = document.querySelector("#submit-button")
@@ -215,11 +211,9 @@ document.querySelectorAll(".room-card").forEach(card => {
       submitButton.disabled = !(emailValid && reasonValid)
     }
 
-    // ถ้าผู้ใช้เปลี่ยนค่า reason หรือ email ให้เช็คทุกครั้ง
     reasonSelect.addEventListener("change", validateForm)
     emailInput.addEventListener("input", validateForm)
 
-    // เรียกตรวจสอบครั้งแรก
     validateForm()
   })
 })
@@ -237,14 +231,12 @@ document.querySelectorAll(".room-card").forEach(card => {
         const unavailable = data.unavailable;
         console.log(unavailable);
   
-        // Map ช่วงเวลา slot ไปยัง array ของชั่วโมง
         const slotToHours = {
           "09:00-12:00": ["09:00", "10:00", "11:00", "12:00"],
           "13:00-18:00": ["13:00", "14:00", "15:00", "16:00", "17:00"],
           "09:00-18:00": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"],
         };
   
-        // ✅ ฟังก์ชันแปลงช่วงเวลาระหว่าง 2 ชั่วโมงให้กลายเป็น array
         function expandHourRange(start, end) {
           const result = [];
           let currentHour = parseInt(start.split(":")[0], 10);
@@ -260,24 +252,19 @@ document.querySelectorAll(".room-card").forEach(card => {
   
         unavailable.forEach(slot => {
           if (slotToHours[slot]) {
-            // ถ้าเป็น slot แบบช่วงเวลา (เช่น 09:00-12:00)
             slotToHours[slot].forEach(hour => disabledHours.add(hour));
           } else {
-            // ถ้าเป็นรายชั่วโมงหรือช่วงเวลาแบบ 10:00, 15:00
             const times = slot.split(',').map(s => s.trim());
             if (times.length === 2) {
-              // เป็นช่วงเวลาแบบ start, end
               const [start, end] = times;
               const range = expandHourRange(start, end);
               range.forEach(hour => disabledHours.add(hour));
             } else {
-              // รายชั่วโมงเดี่ยวๆ
               times.forEach(hour => disabledHours.add(hour));
             }
           }
         });
   
-        // ปิดปุ่มช่วงเวลา
         document.querySelectorAll('.slot-option').forEach(button => {
           const slot = button.dataset.slot;
           const hoursInSlot = slotToHours[slot];
@@ -293,7 +280,6 @@ document.querySelectorAll(".room-card").forEach(card => {
           button.title = isUnavailable ? "This time is already booked." : "";
         });
   
-        // ปิดปุ่มรายชั่วโมง
         document.querySelectorAll('.hour-option').forEach(button => {
           const isUnavailable = disabledHours.has(button.dataset.hour);
           button.disabled = isUnavailable;
