@@ -16,7 +16,6 @@ export default class extends Controller {
       }
     }
 
-    console.log("✅ Flatpickr controller connected")
 
     flatpickr(this.element, {
       dateFormat: "Y-m-d",
@@ -80,7 +79,6 @@ export default class extends Controller {
   }
 
   async loadRooms(_, dateStr) {
-    console.log("📆 Selected date:", dateStr)
 
     try {
       const response = await fetch(`/bookings/available_rooms?date=${dateStr}`)
@@ -229,7 +227,6 @@ export default class extends Controller {
       .then(response => response.json())
       .then(data => {
         const unavailable = data.unavailable;
-        console.log(unavailable);
   
         const slotToHours = {
           "09:00-12:00": ["09:00", "10:00", "11:00", "12:00"],
