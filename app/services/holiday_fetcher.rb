@@ -3,7 +3,7 @@ require 'net/http'
 require 'json'
 
 class HolidayFetcher
-  MYHORA_API_URL = "https://www.myhora.com/calendar/ical/holiday.aspx?2568.json"
+  MYHORA_API_URL = "https://www.myhora.com/calendar/ical/holiday.aspx?latest.json"
 
   def self.sync!
     response = Net::HTTP.get(URI(MYHORA_API_URL))
