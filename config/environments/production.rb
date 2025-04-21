@@ -97,6 +97,9 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
 
+  # debug email
+  puts "GMAIL_USERNAME=#{ENV['GMAIL_USERNAME']}"
+  
 config.action_mailer.smtp_settings = {
   address:              'smtp.gmail.com',
   port:                 587,
