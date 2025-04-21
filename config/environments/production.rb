@@ -106,7 +106,7 @@ config.action_mailer.smtp_settings = {
   authentication:       'plain',
   enable_starttls_auto: true
 }
+config.action_mailer.default_url_options = { host: 'https://odds-meet-space.onrender.com', protocol: 'https' }
 
-config.action_mailer.default_url_options = { host: 'your-production-domain.com' }
 
 end
