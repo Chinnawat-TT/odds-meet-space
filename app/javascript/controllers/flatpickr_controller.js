@@ -326,7 +326,20 @@ export default class extends Controller {
         }
   
         const disabledHours = new Set();
-  
+        const today = new Date();
+        const selectedDate = new Date(date);
+
+        if (
+          today.toDateString() === selectedDate.toDateString()
+        ) {
+          const currentHour = today.getHours();
+
+          for (let h = 0; h < currentHour; h++) {
+            const hourStr = `${String(h).padStart(2, "0")}:00`;
+            disabledHours.add(hourStr);
+          }
+        }
+
         unavailable.forEach(slot => {
           if (slotToHours[slot]) {
             slotToHours[slot].forEach(hour => disabledHours.add(hour));
