@@ -97,12 +97,20 @@ class BookingsController < ApplicationController
 
   def destroy
     @booking = Booking.find(params[:id])
-    @booking.destroy
-  
-    respond_to do |format|
-      format.html { redirect_to bookings_lookup_path, notice: "Booking deleted successfully." }
-      format.json { head :no_content }
-      format.turbo_stream { render turbo_stream: turbo_stream.remove("booking_#{@booking.id}") }
+    
+    if @booking.delete_pin == params[:delete_pin]
+      @booking.destroy
+      respond_to do |format|
+        format.html { redirect_to bookings_lookup_path, notice: "Booking deleted successfully." }
+        format.json { head :no_content }
+        format.turbo_stream { render turbo_stream: turbo_stream.remove("booking_#{@booking.id}") }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to bookings_lookup_path, alert: "Invalid delete PIN." }
+        format.json { render json: { error: "Invalid delete PIN" }, status: :unauthorized }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("booking_#{@booking.id}", partial: "bookings/booking", locals: { booking: @booking, error: "Invalid delete PIN" }) }
+      end
     end
   end
   

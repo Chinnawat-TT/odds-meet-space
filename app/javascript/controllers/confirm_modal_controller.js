@@ -33,25 +33,35 @@ export default class extends Controller {
   }
 
   confirm() {
+    const bookingElement = document.querySelector(`[data-confirm-modal-url-value="${this.currentDeleteUrl}"]`)
+    const deletePinInput = bookingElement.querySelector(".delete-pin-input")
+    const deletePin = deletePinInput.value.trim()
+
+    if (!deletePin) {
+      alert("Please enter the delete PIN")
+      return
+    }
+
     fetch(this.currentDeleteUrl, {
       method: "DELETE",
       headers: {
         "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
-        "Accept": "text/vnd.turbo-stream.html"
-      }
+        "Accept": "text/vnd.turbo-stream.html",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ delete_pin: deletePin })
     }).then(response => {
       if (response.ok) {
-       
-        const bookingElement = document.querySelector(`[data-confirm-modal-url-value="${this.currentDeleteUrl}"]`)
         if (bookingElement) {
           bookingElement.remove()
         }
         this.close()
       } else {
-        alert("delete failed")
+        response.json().then(data => {
+          alert(data.error || "Delete failed")
+        })
         this.close()
       }
     })
   }
-  
 }

@@ -13,7 +13,11 @@
         <p><strong>Reason:</strong> <%= booking.reason == "Other" ? booking.custom_reason : booking.reason %></p>
       </div>
 
-      <div>
+      <div class="flex items-center gap-4">
+        <input type="text" 
+               class="delete-pin-input border rounded px-2 py-1 w-24" 
+               placeholder="Delete PIN"
+               data-booking-id="<%= booking.id %>">
         <button data-action="click->confirm-modal#open"
                 class="text-red-600 border border-red-500 px-3 py-1 rounded hover:bg-red-100">
           Delete
