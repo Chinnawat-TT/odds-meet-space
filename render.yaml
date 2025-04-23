@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: your-app-name
-    env: ruby
-    buildCommand: bundle install
-    startCommand: bundle exec puma -C config/puma.rb
-    migrationsCommand: bundle exec rails db:migrate
