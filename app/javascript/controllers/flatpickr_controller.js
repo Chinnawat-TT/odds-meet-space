@@ -26,10 +26,7 @@ export default class extends Controller {
         date => date.getDay() === 0 || date.getDay() === 6 
       ],
       position: "auto center",
-      onChange: (selectedDates, dateStr) => {
-        this.clearSelections()
-        this.loadRooms(selectedDates, dateStr)
-      }
+      onChange: this.loadRooms.bind(this)
     })
 
 
@@ -58,9 +55,9 @@ export default class extends Controller {
           errorBox.scrollIntoView({ behavior: "smooth" })
         }
       
-        if (!email.endsWith("@odds.team")) {
+        if (email === "") {
           e.preventDefault()
-          displayFormError("You are not authorized to book. Your email must end with @odds.team.")
+          displayFormError("Please enter your email.")
           return
         }
       
@@ -80,74 +77,8 @@ export default class extends Controller {
       })
     }
   }
-  clearSelections() {
-    // Clear hidden fields
-    document.querySelector("#selected-room-id").value = ""
-    document.querySelector("#selected-time-slot").value = ""
-  
-    // Clear selections visually
-    document.querySelectorAll(".room-card").forEach(el =>
-      el.classList.remove("ring", "ring-4", "ring-blue-500")
-    )
-    document.querySelectorAll(".slot-option, .hour-option").forEach(el => {
-      el.classList.remove("bg-blue-500", "text-white")
-      el.disabled = false
-      el.classList.remove("opacity-50", "cursor-not-allowed")
-      el.title = ""
-    })
-  
-    // Clear input fields
-    const emailInput = document.querySelector("#booking-email")
-    // const reasonSelect = document.querySelector("#booking-reason")
-    const customReason = document.querySelector("#custom-reason")
-    if (emailInput) emailInput.value = ""
-    // if (reasonSelect) reasonSelect.value = ""
-    if (customReason) customReason.value = ""
-  
-    // Hide sections
-    const sectionsToHide = ["room-section", "time-section", "reason-section", "email-section", "submit-section", "custom-reason-container"]
-    sectionsToHide.forEach(id => {
-      const el = document.querySelector(`#${id}`)
-      if (el) el.classList.add("hidden")
-    })
-  
-    // Hide error message
-    const errorBox = document.querySelector("#form-error-message")
-    if (errorBox) {
-      errorBox.classList.add("hidden")
-      errorBox.textContent = ""
-    }
-  
-    // Reset active tab
-    document.querySelectorAll(".tab-button").forEach(btn =>
-      btn.classList.remove("active-tab")
-    )
-    document.querySelector(".tab-button[data-tab='slot']")?.classList.add("active-tab")
-    document.querySelectorAll(".tab-content").forEach(tab => tab.classList.add("hidden"))
-    document.querySelector("#slot-tab")?.classList.remove("hidden")
-  }
-  
+
   async loadRooms(_, dateStr) {
-    const timeSection = document.querySelector("#time-section")
-    const reasonSection = document.querySelector("#reason-section")
-    const emailSection = document.querySelector("#email-section")
-    const submitSection = document.querySelector("#submit-section")
-
-    timeSection?.classList.add("hidden")
-    reasonSection?.classList.add("hidden")
-    emailSection?.classList.add("hidden")
-    submitSection?.classList.add("hidden")
-
-    document.querySelector("#selected-time-slot").value = ""
-    document.querySelector("#selected-room-id").value = ""
-
-    document.querySelectorAll(".slot-option, .hour-option").forEach(btn => {
-      btn.classList.remove("bg-blue-500", "text-white")
-    })
-
-    document.querySelectorAll(".room-card").forEach(card => {
-      card.classList.remove("ring", "ring-4", "ring-blue-500")
-    })
 
     try {
       const response = await fetch(`/bookings/available_rooms?date=${dateStr}`)
@@ -223,19 +154,21 @@ export default class extends Controller {
         })
 
         
-        document.addEventListener("click", function (e) {
-          const btn = e.target.closest(".slot-option")
-          if (!btn) return
-        
-         
-          document.querySelectorAll(".slot-option").forEach(el => {
-            el.classList.remove("bg-blue-500", "text-white")
+        document.querySelectorAll(".slot-option").forEach(button => {
+          button.addEventListener("click", () => {
+            const isActive = button.classList.contains("bg-blue-500")
+            document.querySelectorAll(".slot-option").forEach(b =>
+              b.classList.remove("bg-blue-500", "text-white")
+            )
+            if (!isActive) {
+              button.classList.add("bg-blue-500", "text-white")
+              document.querySelector("#selected-time-slot").value = button.dataset.slot
+              showReasonAndEmailSection()
+            } else {
+              document.querySelector("#selected-time-slot").value = ""
+            }
           })
-          btn.classList.add("bg-blue-500", "text-white")
-          document.querySelector("#selected-time-slot").value = btn.dataset.time
-          document.querySelector("#reason-section")?.classList.remove("hidden")
         })
-        
 
         
         document.querySelectorAll(".hour-option").forEach(button => {
@@ -249,19 +182,6 @@ export default class extends Controller {
             document.querySelector("#selected-time-slot").value = selected.join(", ")
             showReasonAndEmailSection()
           })
-        })
-
-        document.addEventListener("click", function (e) {
-          const btn = e.target.closest(".hour-option")
-          if (!btn) return
-        
-         
-          document.querySelectorAll(".hour-option").forEach(el => {
-            el.classList.remove("bg-blue-500", "text-white")
-          })
-          btn.classList.add("bg-blue-500", "text-white")
-          document.querySelector("#selected-time-slot").value = btn.dataset.hour
-          document.querySelector("#reason-section")?.classList.remove("hidden")
         })
 
         document.querySelectorAll(".room-card").forEach(card => {
@@ -284,7 +204,7 @@ export default class extends Controller {
     const submitButton = document.querySelector("#submit-button")
 
     function validateForm() {
-      const emailValid = emailInput.value.trim().endsWith("@odds.team")
+      const emailValid = emailInput.value.trim()
       const reasonValid = reasonSelect.value && reasonSelect.value.trim() !== ""
       submitButton.disabled = !(emailValid && reasonValid)
     }
@@ -326,20 +246,7 @@ export default class extends Controller {
         }
   
         const disabledHours = new Set();
-        const today = new Date();
-        const selectedDate = new Date(date);
-
-        if (
-          today.toDateString() === selectedDate.toDateString()
-        ) {
-          const currentHour = today.getHours();
-
-          for (let h = 0; h < currentHour; h++) {
-            const hourStr = `${String(h).padStart(2, "0")}:00`;
-            disabledHours.add(hourStr);
-          }
-        }
-
+  
         unavailable.forEach(slot => {
           if (slotToHours[slot]) {
             slotToHours[slot].forEach(hour => disabledHours.add(hour));

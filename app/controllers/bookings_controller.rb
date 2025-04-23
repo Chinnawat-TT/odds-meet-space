@@ -65,8 +65,8 @@ class BookingsController < ApplicationController
     if request.post?
       email = params[:email].to_s.strip.downcase
   
-      if email.blank? || !email.ends_with?("@odds.team")
-        flash.now[:alert] = "Please enter a valid @odds.team email."
+      if email.blank?
+        flash.now[:alert] = "Please enter a valid email."
         render :lookup_form and return
       end
   
