@@ -79,22 +79,50 @@ export default class extends Controller {
   }
 
   async loadRooms(_, dateStr) {
-
     try {
       const response = await fetch(`/bookings/available_rooms?date=${dateStr}`)
       const rooms = await response.json()
+
+      // Reset UI state
+      document.querySelector("#selected-room-id").value = ""
+      document.querySelector("#selected-time-slot").value = ""
+      document.querySelector("#reason-section")?.classList.add("hidden")
+      document.querySelector("#email-section")?.classList.add("hidden")
+      document.querySelector("#submit-section")?.classList.add("hidden")
+      document.querySelector("#form-error-message")?.classList.add("hidden")
+
+      // Reset room selection
+      document.querySelectorAll(".room-card").forEach(el => {
+        el.classList.remove("ring", "ring-4", "ring-blue-500")
+      })
+
+      // Reset time selection
+      document.querySelectorAll(".slot-option").forEach(b => {
+        b.classList.remove("bg-blue-500", "text-white")
+        b.disabled = false
+        b.classList.remove("opacity-50", "cursor-not-allowed")
+        b.title = ""
+      })
+
+      document.querySelectorAll(".hour-option").forEach(b => {
+        b.classList.remove("bg-blue-500", "text-white")
+        b.disabled = false
+        b.classList.remove("opacity-50", "cursor-not-allowed")
+        b.title = ""
+      })
 
       const section = document.querySelector("#room-section")
       const list = document.querySelector("#room-list")
       if (section) section.classList.remove("hidden")
 
-        const showReasonAndEmailSection = () => {
-          const value = document.querySelector("#selected-time-slot").value
-          if (value) {
-            document.querySelector("#reason-section")?.classList.remove("hidden")
-            document.querySelector("#email-section")?.classList.remove("hidden")
-          }
+      const showReasonAndEmailSection = () => {
+        const value = document.querySelector("#selected-time-slot").value
+        if (value) {
+          document.querySelector("#reason-section")?.classList.remove("hidden")
+          document.querySelector("#email-section")?.classList.remove("hidden")
+          document.querySelector("#submit-section")?.classList.remove("hidden")
         }
+      }
 
       if (list) {
         list.innerHTML = rooms.map(room => `
@@ -107,6 +135,13 @@ export default class extends Controller {
           </div>
         `).join("")
 
+        // Remove old event listeners
+        const oldCards = document.querySelectorAll(".room-card")
+        oldCards.forEach(card => {
+          card.replaceWith(card.cloneNode(true))
+        })
+
+        // Add new event listeners
         document.querySelectorAll(".room-card").forEach(card => {
           card.addEventListener("click", () => {
             document.querySelectorAll(".room-card").forEach(el =>
@@ -116,15 +151,21 @@ export default class extends Controller {
             card.classList.add("ring", "ring-4", "ring-blue-500")
             document.querySelector("#selected-room-id").value = card.dataset.roomId
             
-            const date = document.querySelector("#booking_date").value;
-            this.fetchUnavailableTimes(date, card.dataset.roomId);
+            const date = document.querySelector("#booking_date").value
+            this.fetchUnavailableTimes(date, card.dataset.roomId)
 
             const timeSection = document.querySelector("#time-section")
             if (timeSection) timeSection.classList.remove("hidden")
           })
         })
 
-        
+        // Remove old tab button listeners
+        const oldTabButtons = document.querySelectorAll(".tab-button")
+        oldTabButtons.forEach(btn => {
+          btn.replaceWith(btn.cloneNode(true))
+        })
+
+        // Add new tab button listeners
         document.querySelectorAll(".tab-button").forEach(btn => {
           btn.addEventListener("click", () => {
             document.querySelectorAll(".tab-button").forEach(b =>
@@ -153,7 +194,13 @@ export default class extends Controller {
           })
         })
 
-        
+        // Remove old slot option listeners
+        const oldSlotOptions = document.querySelectorAll(".slot-option")
+        oldSlotOptions.forEach(option => {
+          option.replaceWith(option.cloneNode(true))
+        })
+
+        // Add new slot option listeners
         document.querySelectorAll(".slot-option").forEach(button => {
           button.addEventListener("click", () => {
             const isActive = button.classList.contains("bg-blue-500")
@@ -170,7 +217,13 @@ export default class extends Controller {
           })
         })
 
-        
+        // Remove old hour option listeners
+        const oldHourOptions = document.querySelectorAll(".hour-option")
+        oldHourOptions.forEach(option => {
+          option.replaceWith(option.cloneNode(true))
+        })
+
+        // Add new hour option listeners
         document.querySelectorAll(".hour-option").forEach(button => {
           button.addEventListener("click", () => {
             button.classList.toggle("bg-blue-500")
@@ -184,38 +237,19 @@ export default class extends Controller {
           })
         })
 
-        document.querySelectorAll(".room-card").forEach(card => {
-          card.addEventListener("click", () => {
-            document.querySelectorAll(".room-card").forEach(el =>
-              el.classList.remove("ring", "ring-4", "ring-blue-500")
-            )
-    card.classList.add("ring", "ring-4", "ring-blue-500")
-    document.querySelector("#selected-room-id").value = card.dataset.roomId
+        // Add form validation
+        const reasonSelect = document.querySelector("#booking-reason")
+        const emailInput = document.querySelector("#booking-email")
+        const submitButton = document.querySelector("#submit-button")
 
-    const timeSection = document.querySelector("#time-section")
-    if (timeSection) timeSection.classList.remove("hidden")
+        function validateForm() {
+          const emailValid = emailInput.value.trim()
+          const reasonValid = reasonSelect.value && reasonSelect.value.trim() !== ""
+          submitButton.disabled = !(emailValid && reasonValid)
+        }
 
-    document.querySelector("#reason-section")?.classList.remove("hidden")
-    document.querySelector("#email-section")?.classList.remove("hidden")
-    document.querySelector("#submit-section")?.classList.remove("hidden")
-
-    const reasonSelect = document.querySelector("#booking-reason")
-    const emailInput = document.querySelector("#booking-email")
-    const submitButton = document.querySelector("#submit-button")
-
-    function validateForm() {
-      const emailValid = emailInput.value.trim()
-      const reasonValid = reasonSelect.value && reasonSelect.value.trim() !== ""
-      submitButton.disabled = !(emailValid && reasonValid)
-    }
-
-    reasonSelect.addEventListener("change", validateForm)
-    emailInput.addEventListener("input", validateForm)
-
-    validateForm()
-  })
-})
-
+        reasonSelect.addEventListener("change", validateForm)
+        emailInput.addEventListener("input", validateForm)
       }
     } catch (e) {
       console.error("❌ Error loading rooms:", e)
