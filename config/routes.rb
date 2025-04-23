@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get '/run_migrations', to: 'admin#migrate'
+  
   get "bookings/available_rooms", to: "bookings#available_rooms"
   get 'bookings/unavailable_times', to: 'bookings#unavailable_times'
   get 'bookings/lookup', to: 'bookings#lookup_form'
