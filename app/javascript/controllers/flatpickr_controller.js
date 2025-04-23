@@ -261,6 +261,22 @@ export default class extends Controller {
             }
           }
         });
+
+        // เพิ่มการตรวจสอบเวลาที่ผ่านไปแล้ว
+        const now = new Date();
+        const isToday = date === now.toISOString().split('T')[0];
+        
+        if (isToday) {
+          const currentHour = now.getHours();
+          const currentMinute = now.getMinutes();
+          
+          // Disable hours that have passed
+          for (let hour = 9; hour <= 17; hour++) {
+            if (hour < currentHour || (hour === currentHour && currentMinute > 0)) {
+              disabledHours.add(`${String(hour).padStart(2, "0")}:00`);
+            }
+          }
+        }
   
         document.querySelectorAll('.slot-option').forEach(button => {
           const slot = button.dataset.slot;
@@ -274,7 +290,7 @@ export default class extends Controller {
           button.disabled = isUnavailable;
           button.classList.toggle('opacity-50', isUnavailable);
           button.classList.toggle('cursor-not-allowed', isUnavailable);
-          button.title = isUnavailable ? "This time is already booked." : "";
+          button.title = isUnavailable ? "This time is already booked or has passed." : "";
         });
   
         document.querySelectorAll('.hour-option').forEach(button => {
@@ -282,7 +298,7 @@ export default class extends Controller {
           button.disabled = isUnavailable;
           button.classList.toggle('opacity-50', isUnavailable);
           button.classList.toggle('cursor-not-allowed', isUnavailable);
-          button.title = isUnavailable ? "This time is already booked." : "";
+          button.title = isUnavailable ? "This time is already booked or has passed." : "";
         });
       });
   }

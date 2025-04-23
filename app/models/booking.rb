@@ -7,6 +7,7 @@ class Booking < ApplicationRecord
   validate :not_in_the_past
   validate :not_on_holiday
   validate :unique_slot
+  validate :not_past_time
 
   def not_in_the_past
     errors.add(:booking_date, "cannot be in the past") if booking_date && booking_date < Date.today
@@ -21,6 +22,17 @@ class Booking < ApplicationRecord
   def unique_slot
     if Booking.exists?(meeting_room_id: meeting_room_id, booking_date: booking_date, booking_time: booking_time)
       errors.add(:booking_time, "has already been booked for this room")
+    end
+  end
+
+  def not_past_time
+    return unless booking_date == Date.today
+
+    current_time = Time.current
+    booking_hour = booking_time.split(':')[0].to_i
+    
+    if booking_hour < current_time.hour || (booking_hour == current_time.hour && current_time.min > 0)
+      errors.add(:booking_time, "has already passed for today")
     end
   end
 end
